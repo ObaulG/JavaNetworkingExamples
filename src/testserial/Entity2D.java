@@ -13,9 +13,10 @@ import java.io.Externalizable;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
-public class Entity2D implements Serializable{
+public class Entity2D implements Externalizable{
 
 	/**
 	 * 
@@ -29,6 +30,9 @@ public class Entity2D implements Serializable{
 	private float y;
 	private ArrayList<Integer> items;
 	
+	public Entity2D() {
+		items = new ArrayList<Integer>();
+	}
 	public Entity2D(String name, float x, float y){
 		this.name = name;
 		this.x = x;
@@ -46,6 +50,28 @@ public class Entity2D implements Serializable{
 		this.items = items;
 	}
 
+	public static Entity2D fromBytes(byte[] serialized) {
+		ByteArrayInputStream bis = new ByteArrayInputStream(serialized);
+		DataInputStream dis = new DataInputStream(bis);
+		Entity2D instance = null;
+		try {
+			int id = dis.readInt();
+			float x = dis.readFloat();
+			float y = dis.readFloat();
+			String name = dis.readUTF();
+			int nb_items = (int) dis.read();
+			ArrayList<Integer> items = new ArrayList<Integer>();
+			for (int i=0; i< nb_items; i++) {
+				items.add(dis.readInt());
+			}
+			instance = new Entity2D(name, x, y, id, items);
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return instance;
+	}
 	private void writeObject(ObjectOutputStream out) throws IOException {
 		out.defaultWriteObject();
 	} 
@@ -55,9 +81,7 @@ public class Entity2D implements Serializable{
 	}
 	
 
-	public byte[] to_bytes_full_data() {
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		DataOutputStream data = new DataOutputStream(out);
+	public void to_bytes_full_data(DataOutputStream data) {
 		try {
 			data.writeInt(id);
 			data.writeFloat(x);
@@ -74,16 +98,18 @@ public class Entity2D implements Serializable{
 		catch (IOException e){
 			e.printStackTrace();
 		}
-		return out.toByteArray();
 	}
 	
-
+	@Override
 	public void writeExternal(ObjectOutput out) throws IOException {
 		// TODO Auto-generated method stub
 		out.writeInt(id);
 		out.writeFloat(x);
 		out.writeFloat(y);
 		out.writeUTF(name);
+		out.writeObject(items);
+		
+		/*
 		// We write the number of items in one byte.
 		out.write(items.size());
 		
@@ -91,21 +117,30 @@ public class Entity2D implements Serializable{
 		for (int i=0; i< items.size(); i++) {
 			out.writeInt(items.get(i));
 		}
+		*/
 	}
-
-
+	
+	@Override
 	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 		id = in.readInt();
 		x = in.readFloat();
 		y = in.readFloat();
 		name = in.readUTF();
+		items = (ArrayList<Integer>) in.readObject();
+		
+		/*
 		int nb_items = (int) in.read();
 		items = new ArrayList<Integer>();
 		for (int i=0; i< nb_items; i++) {
 			items.add(in.readInt());
 		}
+		*/
 	}
 	
+	public void putItem(int value) {
+		if (items.size() < 10)
+			items.add(value);
+	}
 	public String getName() {
 		return name;
 	}
@@ -148,6 +183,11 @@ public class Entity2D implements Serializable{
 
 	public ArrayList<Integer> getItems() {
 		return items;
+	}
+
+	@Override
+	public String toString() {
+		return "Entity2D [id=" + id + ", name=" + name + ", x=" + x + ", y=" + y + ", items=" + items + "]";
 	}
 
 	
