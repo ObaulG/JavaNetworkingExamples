@@ -50,9 +50,7 @@ public class Entity2D implements Externalizable{
 		this.items = items;
 	}
 
-	public static Entity2D fromBytes(byte[] serialized) {
-		ByteArrayInputStream bis = new ByteArrayInputStream(serialized);
-		DataInputStream dis = new DataInputStream(bis);
+	public static Entity2D fromBytes(DataInputStream dis) {
 		Entity2D instance = null;
 		try {
 			int id = dis.readInt();

@@ -3,6 +3,7 @@ package testserial;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -131,25 +132,21 @@ public class TestEntity2D {
 		File saved = new File("donnees.ser");
 		System.out.println("Taille du fichier : " + saved.length() + " octets");
 
-		// Reading
-		/*
+
 		Entity2D deserial = null;
-		ObjectInputStream ois = null;
+		DataInputStream dis = null;
 		try {
 			FileInputStream f = new FileInputStream("donnees.ser");
-			ois = new ObjectInputStream(f);
-			deserial = (Entity2D) ois.readObject();
-			ois.close();
+			dis = new DataInputStream(f);
+			deserial = Entity2D.fromBytes(dis);
+			dis.close();
 			f.close();
 		}
 		catch (IOException ex) {
 			ex.printStackTrace();
 	    }
-		catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
 		System.out.println(deserial);
-		*/
+
 	}
 	public static void main(String[] args) {
 		testCustomSerialization();
