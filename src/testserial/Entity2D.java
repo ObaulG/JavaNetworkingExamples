@@ -16,6 +16,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
+import com.fasterxml.jackson.core.JsonParser;
+
+
 public class Entity2D implements Externalizable{
 
 	/**
@@ -33,6 +36,7 @@ public class Entity2D implements Externalizable{
 	public Entity2D() {
 		items = new ArrayList<Integer>();
 	}
+	
 	public Entity2D(String name, float x, float y){
 		this.name = name;
 		this.x = x;

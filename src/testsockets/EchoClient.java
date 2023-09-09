@@ -14,6 +14,7 @@ public class EchoClient {
         clientSocket = new Socket(ip, port);
         out = new PrintWriter(clientSocket.getOutputStream(), true);
         in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        System.out.println("Socket created! " + clientSocket);
     }
 
     public String sendMessage(String msg) throws IOException {

@@ -1,9 +1,0 @@
-/**
- * 
- */
-/**
- * @author pinap
- *
- */
-module test {
-}

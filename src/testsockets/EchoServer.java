@@ -18,8 +18,10 @@ public class EchoServer {
 	public void start(int port) throws IOException {
 		serverSocket = new ServerSocket(port);
 		System.out.println("Server opened on port " + port + ", waiting for a client...");
+		// Will block until a client connects.
 		clientSocket = serverSocket.accept();
-		System.out.println("Client connected"+clientSocket);
+		System.out.println("Client connected: "+clientSocket);
+		System.out.println("InetAddress: " + clientSocket.getInetAddress() + "\nPort: " + clientSocket.getPort());
 		out = new PrintWriter(clientSocket.getOutputStream(), true);
 		in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 		String text = in.readLine();
@@ -33,18 +35,5 @@ public class EchoServer {
         serverSocket.close();
     }
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		EchoServer server = new EchoServer();
-		try {
-			server.start(8869);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 
 }
