@@ -17,7 +17,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
 import com.fasterxml.jackson.core.JsonParser;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Entity2D implements Externalizable{
 
@@ -25,7 +26,9 @@ public class Entity2D implements Externalizable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	public static final int MAX_ITEMS = 10; 
+	public static final int MAX_ITEMS = 10;
+	public static final int ITEM_MIN_VAL = -100;
+	public static final int ITEM_MAX_VAL = 120;
 	public static int nb_generated = 0;
 	private int id;
 	private String name;
@@ -53,7 +56,14 @@ public class Entity2D implements Externalizable{
 		this.id = id;
 		this.items = items;
 	}
-
+	
+	/**
+	 * Create an instance of Entity2D from a DataInputStream bytes that was written by the method to_bytes_full_data. 
+	 * Attributes are represented in this order : 
+	 * id (int), x and y (float), name (String), count of items (int), items (ints).
+	 * @param dis : The DataInputStream holding the data.
+	 * @return The instance of Entity2D corresponding to the bytes, or null if an exception is raised.
+	 */
 	public static Entity2D fromBytes(DataInputStream dis) {
 		Entity2D instance = null;
 		try {
@@ -74,6 +84,18 @@ public class Entity2D implements Externalizable{
 		
 		return instance;
 	}
+	
+	public static Entity2D fromJSON(String json_string) {
+		ObjectMapper mapper = new ObjectMapper();
+		Entity2D entity = null;
+		try {
+			entity = mapper.readValue(json_string, Entity2D.class);
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return entity;
+	}
 	private void writeObject(ObjectOutputStream out) throws IOException {
 		out.defaultWriteObject();
 	} 
@@ -82,7 +104,11 @@ public class Entity2D implements Externalizable{
 		in.defaultReadObject();
 	}
 	
-
+	/**
+	 * Write the data of this instance into the DataOutputStream given in parameter in this order :
+	 * id (int), x and y (float), name (String), count of items (int), items (ints).
+	 * @param data
+	 */
 	public void to_bytes_full_data(DataOutputStream data) {
 		try {
 			data.writeInt(id);
@@ -102,6 +128,17 @@ public class Entity2D implements Externalizable{
 		}
 	}
 	
+	public String toJSON() {
+		ObjectMapper mapper = new ObjectMapper();
+		String json_string = "";
+		try {
+			json_string = mapper.writeValueAsString(this);
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return json_string;
+	}
 	@Override
 	public void writeExternal(ObjectOutput out) throws IOException {
 		// TODO Auto-generated method stub

@@ -3,19 +3,21 @@ package testserial;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.ObjectInputStream;
 
 import java.time.Duration;
 import java.time.Instant;
 
+
 // http://web.mit.edu/6.031/www/sp19/classes/23-sockets-networking/
 
 public class TestEntity2D {
-
 	
 	
 	public static void testStandardSerialization() {
@@ -148,8 +150,49 @@ public class TestEntity2D {
 		System.out.println(deserial);
 
 	}
+	public static void testJSONBasic() {
+		Entity2D ent_1 = new Entity2D("test1", 0.0f, 0.0f);
+		ent_1.putItem(5);
+		ent_1.putItem(7);
+		ent_1.putItem(-1);
+		System.out.println("Avant : " + ent_1);
+		DataOutputStream oos = null;
+		
+		// Writing
+		try {
+			FileOutputStream fichier = new FileOutputStream("donneesjson.ser");
+			oos = new DataOutputStream(fichier);
+			String json_string = ent_1.toJSON();
+			oos.writeUTF(json_string);
+			fichier.close();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		// How long is the file ?
+		File saved = new File("donneesjson.ser");
+		System.out.println("Taille du fichier : " + saved.length() + " octets");
+
+
+		Entity2D deserial = null;
+		DataInputStream dis = null;
+		try {
+			FileInputStream f = new FileInputStream("donneesjson.ser");
+			dis = new DataInputStream(f);
+			String json_read = dis.readUTF();
+			deserial = Entity2D.fromJSON(json_read);
+			dis.close();
+			f.close();
+		}
+		catch (IOException ex) {
+			ex.printStackTrace();
+	    }
+		System.out.println(deserial);
+
+	}
 	public static void main(String[] args) {
-		testCustomSerialization();
+		testJSONBasic();
 		
 	}
 
